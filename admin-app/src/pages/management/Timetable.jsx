@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../../api'
-import { Table, Save, Plus, Trash2, Clock, User } from 'lucide-react'
+import { Save, User, Clock, CheckCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function Timetable() {
@@ -8,22 +8,51 @@ export default function Timetable() {
   const [timetable, setTimetable] = useState([])
   const [teachers, setTeachers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
 
-  const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
-  const PERIODS = [1,2,3,4,5,6,7,8]
+  // Manage period times locally (common for all days)
+  const [periodTimings, setPeriodTimings] = useState(
+    Array.from({ length: 8 }, (_, i) => ({
+      period: String(i + 1),
+      startTime: '09:00',
+      endTime: '09:45'
+    }))
+  )
+
+  const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const PERIODS = [1, 2, 3, 4, 5, 6, 7, 8]
 
   useEffect(() => {
     load()
   }, [cls])
 
   const load = async () => {
+    setLoading(true)
     try {
       const [ttRes, tRes] = await Promise.all([
         api.get(`/management/timetable?class=${cls}`),
         api.get('/admin/teachers')
       ])
-      setTimetable(ttRes.data)
+      
+      const ttData = ttRes.data
+      setTimetable(ttData)
       setTeachers(tRes.data)
+
+      // Sync period timings from existing data if available
+      if (ttData.length > 0 && ttData[0].slots.length > 0) {
+        const newTimings = [...periodTimings]
+        ttData[0].slots.forEach(slot => {
+          const idx = PERIODS.indexOf(Number(slot.period))
+          if (idx !== -1) {
+            newTimings[idx] = { 
+              period: slot.period, 
+              startTime: slot.startTime || '09:00', 
+              endTime: slot.endTime || '09:45' 
+            }
+          }
+        })
+        setPeriodTimings(newTimings)
+      }
     } finally { setLoading(false) }
   }
 
@@ -32,73 +61,164 @@ export default function Timetable() {
     return dayData?.slots.find(s => s.period === String(period))
   }
 
-  const handleUpdate = async (day, period, teacherId) => {
-    const dayData = timetable.find(t => t.day === day) || { day, slots: [] }
-    const updatedSlots = dayData.slots.filter(s => s.period !== String(period))
-    if (teacherId) {
-      updatedSlots.push({ period: String(period), teacherId })
-    }
+  const handleSlotChange = (day, period, teacherId) => {
+    setTimetable(prev => {
+      const updated = [...prev]
+      let dayData = updated.find(t => t.day === day)
+      
+      if (!dayData) {
+        dayData = { day, class: cls, slots: [] }
+        updated.push(dayData)
+      }
 
-    try {
-      await api.put('/management/timetable', { class: cls, day, slots: updatedSlots })
-      load()
-      toast.success('Timetable updated')
-    } catch { toast.error('Failed to update') }
+      dayData.slots = dayData.slots.filter(s => s.period !== String(period))
+      if (teacherId) {
+        dayData.slots.push({ period: String(period), teacherId: teachers.find(t => t._id === teacherId) })
+      }
+      return updated
+    })
   }
 
-  if (loading) return <div className="p-8 text-gray-500">Loading timetable...</div>
+  const handleTimeChange = (periodIdx, field, value) => {
+    const newTimings = [...periodTimings]
+    newTimings[periodIdx][field] = value
+    setPeriodTimings(newTimings)
+  }
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      // Prepare save data for each day
+      const savePromises = DAYS.map(day => {
+        const dayData = timetable.find(t => t.day === day) || { day, slots: [] }
+        
+        // Attach current timings to slots
+        const finalSlots = dayData.slots.map(slot => {
+          const timing = periodTimings[PERIODS.indexOf(Number(slot.period))]
+          return {
+            ...slot,
+            startTime: timing.startTime,
+            endTime: timing.endTime,
+            teacherId: slot.teacherId?._id || slot.teacherId // Handle both populated and ID
+          }
+        })
+
+        // Also add empty slots with timings if we want consistency, 
+        // but typically we only save assigned slots.
+        // For this app, we'll just save assigned slots with their assigned timings.
+
+        return api.put('/management/timetable', { 
+          class: cls, 
+          day, 
+          slots: finalSlots 
+        })
+      })
+
+      await Promise.all(savePromises)
+      toast.success('Timetable saved successfully!')
+      load()
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to save timetable')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) return (
+    <div className="p-20 flex flex-col items-center justify-center text-slate-400">
+      <div className="w-10 h-10 border-2 border-slate-200 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
+      <p className="font-bold tracking-widest text-[10px] uppercase">Loading Schedule...</p>
+    </div>
+  )
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-8 md:p-12 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Timetable Management</h1>
-          <p className="text-gray-500 mt-1">Assign teachers to classes and time slots</p>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Timetable Management</h1>
+          <p className="text-slate-500 font-medium">Configure teacher assignments and period timings for Class {cls}.</p>
         </div>
-        <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-100">
-           {['11','12'].map(c => (
-             <button key={c} onClick={() => setCls(c)} className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${cls === c ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30' : 'text-gray-400 hover:text-gray-600'}`}>Class {c}</button>
-           ))}
+        
+        <div className="flex items-center gap-4">
+          <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
+             {['11','12'].map(c => (
+               <button 
+                 key={c} 
+                 onClick={() => setCls(c)} 
+                 className={`px-6 py-2 rounded-xl text-xs font-black tracking-widest uppercase transition-all ${cls === c ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+               >
+                 Class {c}
+               </button>
+             ))}
+          </div>
+          
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-indigo-300 transition-all disabled:opacity-50"
+          >
+            {saving ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <Save className="w-4 h-4" />}
+            <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+          </button>
         </div>
       </div>
 
-      <div className="card overflow-hidden">
+      <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="table-th bg-gray-100 sticky left-0 z-20 border-r border-gray-200">Day / Period</th>
-                {PERIODS.map(p => (
-                  <th key={p} className="table-th text-center min-w-[150px]">
-                    <div className="flex flex-col">
-                      <span className="text-xs">Period {p}</span>
-                      <span className="text-[10px] font-normal text-gray-400">Slot {p}</span>
+            <thead>
+              <tr className="bg-slate-50/50">
+                <th className="px-8 py-10 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left border-r border-slate-100 sticky left-0 bg-slate-50 z-20">
+                  Day / Period
+                </th>
+                {PERIODS.map((p, idx) => (
+                  <th key={p} className="px-6 py-8 min-w-[200px] border-r border-slate-100 last:border-r-0">
+                    <div className="flex flex-col items-center gap-4">
+                      <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Period {p}</span>
+                      <div className="flex items-center gap-2 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                        <input 
+                          type="time" 
+                          value={periodTimings[idx].startTime}
+                          onChange={(e) => handleTimeChange(idx, 'startTime', e.target.value)}
+                          className="text-[10px] font-bold text-slate-600 focus:outline-none bg-transparent"
+                        />
+                        <span className="text-[10px] text-slate-300">-</span>
+                        <input 
+                          type="time" 
+                          value={periodTimings[idx].endTime}
+                          onChange={(e) => handleTimeChange(idx, 'endTime', e.target.value)}
+                          className="text-[10px] font-bold text-slate-600 focus:outline-none bg-transparent"
+                        />
+                      </div>
                     </div>
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100">
               {DAYS.map(day => (
-                <tr key={day} className="hover:bg-gray-50">
-                  <td className="table-td font-bold text-gray-600 bg-gray-50 sticky left-0 z-10 border-r border-gray-200">{day}</td>
+                <tr key={day} className="group hover:bg-slate-50/30 transition-all">
+                  <td className="px-8 py-10 font-black text-slate-700 bg-white sticky left-0 z-10 border-r border-slate-100 shadow-[4px_0_12px_-4px_rgba(0,0,0,0.02)]">
+                    {day}
+                  </td>
                   {PERIODS.map(period => {
                     const slot = getSlot(day, period)
                     return (
-                      <td key={period} className="table-td p-1">
-                        <div className="relative group">
+                      <td key={period} className="px-4 py-4 border-r border-slate-50 last:border-r-0">
+                        <div className="relative">
                           <select 
-                            className={`w-full text-[11px] p-2 rounded-lg border-0 focus:ring-2 focus:ring-primary-500 appearance-none bg-transparent transition-all ${slot ? 'font-bold text-primary-700 bg-primary-50/50' : 'text-gray-300'}`}
-                            value={slot?.teacherId?._id || ''}
-                            onChange={(e) => handleUpdate(day, period, e.target.value)}
+                            className={`w-full text-xs font-bold p-4 rounded-2xl border-2 transition-all appearance-none cursor-pointer focus:outline-none ${slot ? 'bg-indigo-50 border-indigo-100 text-indigo-700' : 'bg-slate-50 border-transparent text-slate-400 hover:border-slate-200'}`}
+                            value={slot?.teacherId?._id || slot?.teacherId || ''}
+                            onChange={(e) => handleSlotChange(day, period, e.target.value)}
                           >
-                            <option value="">— Assign —</option>
+                            <option value="">— Unassigned —</option>
                             {teachers.map(t => (
                               <option key={t._id} value={t._id}>{t.name} ({t.subject})</option>
                             ))}
                           </select>
-                          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-20">
-                            <User className="w-3 h-3" />
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-20">
+                            {slot ? <CheckCircle className="w-4 h-4 text-indigo-600" /> : <User className="w-4 h-4" />}
                           </div>
                         </div>
                       </td>
@@ -111,12 +231,12 @@ export default function Timetable() {
         </div>
       </div>
       
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-         <div className="card p-4 bg-indigo-50 border-indigo-100 flex items-center gap-4">
-            <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white"><Clock className="w-5 h-5" /></div>
+      <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+         <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-6">
+            <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100"><Clock className="w-6 h-6" /></div>
             <div>
-               <p className="text-xs font-bold text-indigo-800 uppercase">Standard Period</p>
-               <p className="text-sm text-indigo-600">45 Minutes per slot</p>
+               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status Message</p>
+               <p className="text-sm font-bold text-slate-600">Ensure all periods have assigned times before saving for students to see correctly.</p>
             </div>
          </div>
       </div>
