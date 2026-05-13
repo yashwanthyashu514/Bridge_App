@@ -7,7 +7,7 @@ export default function TeacherLayout() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] font-sans text-slate-900">
+    <div className="h-screen bg-[#FDFDFD] font-sans text-slate-900 flex flex-col overflow-hidden">
       {/* High-End Institutional Header */}
       <header className="bg-[#2D2B52] text-white sticky top-0 z-50 shadow-md h-20">
         <div className="max-w-[1400px] mx-auto px-8 h-full flex items-center justify-between">
@@ -46,7 +46,7 @@ export default function TeacherLayout() {
         </div>
       </header>
 
-      <main className="w-full">
+      <main className="w-full flex-1 overflow-y-auto">
         <Outlet />
       </main>
     </div>

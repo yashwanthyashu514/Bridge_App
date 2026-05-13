@@ -6,7 +6,7 @@ export default function AdminLayout() {
   const { logout } = useAuth()
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="h-screen bg-slate-50 font-sans flex flex-col overflow-hidden">
       {/* Top Navbar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
@@ -34,7 +34,7 @@ export default function AdminLayout() {
         </div>
       </header>
 
-      <main className="max-w-[1400px] mx-auto">
+      <main className="max-w-[1400px] mx-auto w-full flex-1 overflow-y-auto">
         <Outlet />
       </main>
     </div>

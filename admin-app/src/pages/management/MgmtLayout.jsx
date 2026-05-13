@@ -14,7 +14,7 @@ export default function MgmtLayout() {
   const { logout } = useAuth()
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC] p-4 gap-4">
+    <div className="flex h-screen bg-[#F8FAFC] p-4 gap-4 overflow-hidden">
       {/* Round Rectangular Sidebar */}
       <aside className="w-72 bg-slate-900 rounded-[32px] flex flex-col shadow-2xl shadow-slate-200 overflow-hidden shrink-0 animate-in slide-in-from-left duration-700">
         <div className="p-8">
