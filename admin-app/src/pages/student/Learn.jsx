@@ -359,7 +359,7 @@ export default function ClassPortal() {
                 fontSize: 56, fontWeight: 900, color: "#0f172a", margin: "0 0 16px", 
                 lineHeight: 1.1, tracking: "-0.04em", letterSpacing: "-0.04em"
               }}>
-                Sapthagiri <span style={{ color: "#6366f1" }}>XI</span> Portal
+                College <span style={{ color: "#6366f1" }}>XI</span> Portal
               </h1>
               <p style={{ fontSize: 18, color: "#64748b", maxWidth: 600, margin: "0 auto", lineHeight: 1.6, fontWeight: 500 }}>
                 High-fidelity educational resources for the future leaders. Select a subject to begin your journey.
@@ -735,7 +735,7 @@ export default function ClassPortal() {
         borderTop: "1px solid #f1f5f9", marginTop: 80,
         background: "#fff"
       }}>
-        SAPTHAGIRI VIDYALAYA · CLASS XI ACADEMIC PORTAL · 2025
+        COLLEGE · CLASS XI ACADEMIC PORTAL · 2025
       </footer>
     </div>
   );
