@@ -239,7 +239,7 @@ export default function ClassPortal() {
       minHeight: "100vh",
       background: "#FAFAF8",
       fontFamily: FONT,
-    }}>
+    }} className="animate-in fade-in duration-700">
       {/* Top nav */}
       <nav style={{
         background: "#1E3A5F",
@@ -336,11 +336,19 @@ export default function ClassPortal() {
                     borderRadius: 12,
                     padding: "24px 20px",
                     cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    transform: hoveredSubject === subject ? "translateY(-3px)" : "none",
-                    boxShadow: hoveredSubject === subject ? `0 8px 24px ${info.accent}18` : "none",
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    transform: hoveredSubject === subject ? "translateY(-8px) scale(1.02)" : "none",
+                    boxShadow: hoveredSubject === subject ? `0 20px 40px ${info.accent}15` : "0 2px 8px rgba(0,0,0,0.02)",
+                    animation: `slideUp 0.6s ease forwards ${0.1 * Object.keys(data).indexOf(subject)}s`,
+                    opacity: 0,
                   }}
                 >
+                  <style>{`
+                    @keyframes slideUp {
+                      from { opacity: 0; transform: translateY(20px); }
+                      to { opacity: 1; transform: translateY(0); }
+                    }
+                  `}</style>
                   <div style={{ width: 48, height: 48, marginBottom: 14, borderRadius: 10, overflow: 'hidden' }}>
                     {info.icon.startsWith('/') ? (
                       <img src={info.icon} alt={subject} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -434,9 +442,18 @@ export default function ClassPortal() {
                       borderRadius: 10,
                       padding: "14px 16px",
                       cursor: "pointer",
-                      transition: "all 0.15s ease",
+                      transition: "all 0.2s ease",
+                      transform: hoveredChapter === chapter ? "translateX(4px)" : "none",
+                      animation: `fadeInRight 0.4s ease forwards ${i * 0.05}s`,
+                      opacity: 0,
                     }}
                   >
+                    <style>{`
+                      @keyframes fadeInRight {
+                        from { opacity: 0; transform: translateX(-10px); }
+                        to { opacity: 1; transform: translateX(0); }
+                      }
+                    `}</style>
                     <span style={{
                       minWidth: 32, height: 32, borderRadius: "50%",
                       background: accent + "15",
@@ -489,14 +506,22 @@ export default function ClassPortal() {
                     borderRadius: 10,
                     padding: "16px 18px",
                     cursor: "pointer",
-                    transition: "all 0.15s ease",
+                    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                     display: "flex",
                     alignItems: "flex-start",
                     gap: 12,
-                    transform: hoveredSub === i ? "translateY(-2px)" : "none",
-                    boxShadow: hoveredSub === i ? `0 4px 16px ${accent}14` : "none",
+                    transform: hoveredSub === i ? "translateY(-4px) scale(1.02)" : "none",
+                    boxShadow: hoveredSub === i ? `0 12px 24px ${accent}14` : "none",
+                    animation: `popIn 0.4s ease forwards ${i * 0.03}s`,
+                    opacity: 0,
                   }}
                 >
+                  <style>{`
+                    @keyframes popIn {
+                      from { opacity: 0; transform: scale(0.95); }
+                      to { opacity: 1; transform: scale(1); }
+                    }
+                  `}</style>
                   <div style={{
                     minWidth: 36, height: 36, borderRadius: "50%",
                     background: accent,
