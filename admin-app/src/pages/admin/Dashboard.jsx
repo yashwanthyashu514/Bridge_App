@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import api from '../../api'
 import toast from 'react-hot-toast'
-import { Users, GraduationCap, Clock, ChevronRight, Trophy } from 'lucide-react'
+import { Users, GraduationCap, Clock, Trophy, Plus, Megaphone } from 'lucide-react'
 
 const StatCard = ({ label, value, icon: Icon, color }) => (
   <div className="bg-white p-8 rounded-2xl border border-slate-100 flex items-center gap-6 shadow-sm hover:shadow-md transition-all duration-300 group">
@@ -29,6 +29,7 @@ const InsightCard = ({ title, desc, icon: Icon, to, color }) => (
 )
 
 export default function AdminDashboard() {
+  const navigate = useNavigate()
   const [stats, setStats] = useState({ teachers: 0, students: 0, pending: 0 })
   const [loading, setLoading] = useState(true)
 
@@ -125,6 +126,7 @@ export default function AdminDashboard() {
         </div>
       </div>
     </div>
+  </div>
   )
 }
 
