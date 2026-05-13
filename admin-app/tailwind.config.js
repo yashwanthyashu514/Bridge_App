@@ -5,12 +5,6 @@ export default {
     extend: {
       colors: {
         primary: {
-          50:  '#f0f4f8',
-          100: '#d9e2ec',
-          200: '#bcccdc',
-          300: '#9fb3c8',
-          400: '#829ab1',
-          500: '#0A192F', // Deep Navy
           600: '#071224',
           700: '#050c18',
           800: '#03060c',

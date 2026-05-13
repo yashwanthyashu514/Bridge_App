@@ -1,10 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-lux: #FFE169;
+  --secondary-lux: #FFD235;
+  --bg-lux: #FAF9F6;
+  --text-lux: #1A1A1A;
+}
+
 @layer base {
   body {
-    @apply bg-[#F8FAFC] text-slate-900 font-sans antialiased;
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--bg-lux);
+    color: var(--text-lux);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    letter-spacing: -0.02em;
   }
 }
 
