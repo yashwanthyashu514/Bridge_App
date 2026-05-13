@@ -60,33 +60,33 @@ export default function AdminDashboard() {
   )
 
   return (
-    <div className="h-screen overflow-y-auto bg-slate-50/30">
-      <div className="p-8 lg:p-12 max-w-[1600px] mx-auto animate-in fade-in duration-700">
+    <div className="h-screen overflow-hidden bg-slate-50/30">
+      <div className="p-6 lg:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-700 h-full flex flex-col">
         
-        <header className="flex justify-between items-center mb-12">
+        <header className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3">Admin Dashboard</h1>
+            <h1 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Admin Dashboard</h1>
             <div className="flex items-center gap-4">
-              <h2 className="text-5xl font-black text-slate-900 tracking-tighter">Welcome back, <span className="text-indigo-600 italic font-serif">Principal</span></h2>
+              <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Welcome back, <span className="text-indigo-600 italic font-serif">Principal</span></h2>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-             <button onClick={() => navigate('/admin/create')} className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-slate-100 rounded-2xl font-bold text-slate-600 hover:border-indigo-600 hover:text-indigo-600 transition-all shadow-sm">
+          <div className="flex items-center gap-2">
+             <button onClick={() => navigate('/admin/create')} className="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-slate-100 rounded-xl font-bold text-slate-600 hover:border-indigo-600 hover:text-indigo-600 transition-all shadow-sm text-sm">
                 <Plus className="w-4 h-4" /> Create Staff
              </button>
-             <button onClick={() => navigate('/admin/announcement')} className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-slate-100 rounded-2xl font-bold text-slate-600 hover:border-indigo-600 hover:text-indigo-600 transition-all shadow-sm">
+             <button onClick={() => navigate('/admin/announcement')} className="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-slate-100 rounded-xl font-bold text-slate-600 hover:border-indigo-600 hover:text-indigo-600 transition-all shadow-sm text-sm">
                 <Megaphone className="w-4 h-4" /> Send Announcement
              </button>
           </div>
         </header>
 
         {/* Top Stats - Hero Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatCard label="Total Teachers" value={stats.teachers} icon={Users} color="bg-indigo-50 text-indigo-600" />
           <StatCard label="Total Students" value={stats.students} icon={GraduationCap} color="bg-emerald-50 text-emerald-600" />
           <button 
             onClick={() => navigate('/admin/students?filter=pending')}
-            className="text-left group transition-transform hover:scale-[1.02] active:scale-95"
+            className="text-left group transition-transform hover:scale-[1.01] active:scale-95"
           >
             <StatCard 
               label="Pending Approvals" 
@@ -97,33 +97,34 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-
-      {/* Directories & Insights */}
-      <div className="mb-8">
-        <p className="text-slate-400 font-black text-[11px] uppercase tracking-[0.3em] mb-10">Directories & Insights</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <InsightCard 
-            title="Teachers Directory" 
-            desc="Browse and manage all teaching staff, assignments, and subjects." 
-            icon={Users} 
-            to="/admin/teachers" 
-            color="bg-indigo-50 text-indigo-600"
-          />
-          <InsightCard 
-            title="Student Directory" 
-            desc="View enrolled students, attendance records, and academic status." 
-            icon={GraduationCap} 
-            to="/admin/students" 
-            color="bg-emerald-50 text-emerald-600"
-          />
-          <InsightCard 
-            title="Leaderboard" 
-            desc="Top performers across all classes based on academic excellence." 
-            icon={Trophy} 
-            to="/admin/leaderboard" 
-            color="bg-amber-50 text-amber-600"
-          />
+        {/* Directories & Insights */}
+        <div className="flex-1">
+          <p className="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] mb-6">Directories & Insights</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <InsightCard 
+              title="Teachers Directory" 
+              desc="Manage teaching staff and subjects." 
+              icon={Users} 
+              to="/admin/teachers" 
+              color="bg-indigo-50 text-indigo-600"
+            />
+            <InsightCard 
+              title="Student Directory" 
+              desc="View records and academic status." 
+              icon={GraduationCap} 
+              to="/admin/students" 
+              color="bg-emerald-50 text-emerald-600"
+            />
+            <InsightCard 
+              title="Leaderboard" 
+              desc="Top performers across all classes." 
+              icon={Trophy} 
+              to="/admin/leaderboard" 
+              color="bg-amber-50 text-amber-600"
+            />
+          </div>
         </div>
+
       </div>
     </div>
   </div>
