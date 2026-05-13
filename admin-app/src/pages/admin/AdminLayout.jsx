@@ -34,7 +34,7 @@ export default function AdminLayout() {
         </div>
       </header>
 
-      <main className="max-w-[1400px] mx-auto w-full flex-1 overflow-y-auto">
+      <main className="max-w-[1400px] mx-auto w-full flex-1 overflow-hidden">
         <Outlet />
       </main>
     </div>
