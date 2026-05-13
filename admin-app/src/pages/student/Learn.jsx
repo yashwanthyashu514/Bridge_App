@@ -204,8 +204,7 @@ function getYoutubeEmbedUrl(url) {
   return url;
 }
 
-const FONT = "'Georgia', 'Times New Roman', serif";
-const MONO = "'Courier New', monospace";
+const FONT_SANS = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
 export default function ClassPortal() {
   const navigate = useNavigate();
@@ -219,12 +218,11 @@ export default function ClassPortal() {
   const [hoveredSub, setHoveredSub] = useState(null);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setTimeout(() => setMounted(true), 50); }, []);
+  useEffect(() => { setMounted(true); }, []);
 
   const subjectInfo = selectedSubject ? data[selectedSubject] : null;
-  const accent = subjectInfo ? subjectInfo.accent : "#1E3A5F";
-  const bg = subjectInfo ? subjectInfo.bg : "#F8F7F4";
-
+  const accent = subjectInfo ? subjectInfo.accent : "#6366f1";
+  
   const chapterKeys = selectedSubject ? Object.keys(data[selectedSubject].chapters) : [];
   const filteredChapters = chapterKeys.filter(c => c.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -237,54 +235,81 @@ export default function ClassPortal() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#FAFAF8",
-      fontFamily: FONT,
-    }} className="animate-in fade-in duration-700">
-      {/* Top nav */}
+      background: "#FDFDFD",
+      fontFamily: FONT_SANS,
+      color: "#0f172a",
+      overflowX: "hidden"
+    }} className="animate-in fade-in duration-1000">
+      
+      {/* Mesh Background Effect */}
+      <div style={{
+        position: "fixed",
+        top: 0, left: 0, right: 0, bottom: 0,
+        zIndex: 0,
+        background: `
+          radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+          radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.05) 0px, transparent 50%),
+          radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+          radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.05) 0px, transparent 50%)
+        `,
+        pointerEvents: "none"
+      }} />
+
+      {/* Top Nav */}
       <nav style={{
-        background: "#1E3A5F",
-        padding: "0 32px",
+        background: "rgba(15, 23, 42, 0.95)",
+        backdropFilter: "blur(12px)",
+        padding: "0 40px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        height: 56,
-        gap: 0,
-        borderBottom: "1px solid #162D4A",
+        height: 64,
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+        borderBottom: "1px solid rgba(255,255,255,0.1)",
       }}>
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
           <div
             onClick={goHome}
-            style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}
+            style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 12 }}
           >
-            <span style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", letterSpacing: "0.04em", fontFamily: MONO }}>CLASS XI</span>
-            <span style={{ width: 1, height: 20, background: "#2C5280", margin: "0 16px" }} />
+            <div style={{ 
+              background: "linear-gradient(135deg, #6366f1, #a855f7)", 
+              width: 32, height: 32, borderRadius: 8,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "#fff", fontWeight: "bold"
+            }}>XI</div>
+            <span style={{ fontSize: 14, fontWeight: 800, color: "#fff", letterSpacing: "0.1em", textTransform: "uppercase" }}>Class Portal</span>
           </div>
 
           {/* Breadcrumb */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "rgba(255,255,255,0.55)", fontFamily: "'Helvetica Neue', sans-serif" }}>
-            <span onClick={goHome} style={{ cursor: "pointer", color: "rgba(255,255,255,0.7)" }}>Home</span>
+          <div style={{ 
+            display: "flex", alignItems: "center", gap: 12, 
+            fontSize: 12, color: "rgba(255,255,255,0.4)", 
+            fontWeight: 600, letterSpacing: "0.02em" 
+          }}>
+            <span onClick={goHome} style={{ cursor: "pointer", transition: "color 0.2s", color: !selectedSubject ? "#fff" : "inherit" }} onMouseEnter={e => e.target.style.color="#fff"} onMouseLeave={e => e.target.style.color=""}>HOME</span>
             {selectedSubject && (
               <>
-                <span style={{ opacity: 0.4 }}>/</span>
+                <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
                 <span
                   onClick={view !== "chapters" ? goSubject : undefined}
-                  style={{ cursor: view !== "chapters" ? "pointer" : "default", color: view === "chapters" ? "#fff" : "rgba(255,255,255,0.7)" }}
-                >{selectedSubject}</span>
+                  style={{ cursor: view !== "chapters" ? "pointer" : "default", color: view === "chapters" ? "#fff" : "inherit" }}
+                >{selectedSubject.toUpperCase()}</span>
               </>
             )}
             {selectedChapter && (
               <>
-                <span style={{ opacity: 0.4 }}>/</span>
+                <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
                 <span
                   onClick={view !== "subtopics" ? goChapter : undefined}
-                  style={{ cursor: view !== "subtopics" ? "pointer" : "default", color: view === "subtopics" ? "#fff" : "rgba(255,255,255,0.7)", maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-                >{selectedChapter}</span>
-              </>
-            )}
-            {selectedSubtopic && (
-              <>
-                <span style={{ opacity: 0.4 }}>/</span>
-                <span style={{ color: "#fff", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selectedSubtopic.name}</span>
+                  style={{ 
+                    cursor: view !== "subtopics" ? "pointer" : "default", 
+                    color: view === "subtopics" ? "#fff" : "inherit", 
+                    maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" 
+                  }}
+                >{selectedChapter.toUpperCase()}</span>
               </>
             )}
           </div>
@@ -296,72 +321,113 @@ export default function ClassPortal() {
             cursor: "pointer", 
             display: "flex", 
             alignItems: "center", 
-            gap: 8,
-            background: "rgba(255,255,255,0.05)",
-            padding: "6px 12px",
-            borderRadius: "8px",
-            border: "1px solid rgba(255,255,255,0.1)"
+            gap: 10,
+            background: "rgba(99, 102, 241, 0.15)",
+            padding: "8px 16px",
+            borderRadius: "12px",
+            border: "1px solid rgba(99, 102, 241, 0.3)",
+            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = "rgba(99, 102, 241, 0.25)";
+            e.currentTarget.style.transform = "scale(1.02)";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = "rgba(99, 102, 241, 0.15)";
+            e.currentTarget.style.transform = "scale(1)";
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 700, color: "#FFFFFF", letterSpacing: "0.08em", fontFamily: "'Helvetica Neue', sans-serif" }}>DASHBOARD</span>
-          <ArrowLeft style={{ width: 14, height: 14, color: "#FFFFFF", opacity: 0.8, transform: "rotate(180deg)" }} />
+          <span style={{ fontSize: 11, fontWeight: 800, color: "#fff", letterSpacing: "0.1em" }}>DASHBOARD</span>
+          <ArrowLeft style={{ width: 14, height: 14, color: "#fff", transform: "rotate(180deg)" }} />
         </div>
       </nav>
 
-      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "40px 24px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "64px 40px", position: "relative", zIndex: 1 }}>
 
         {/* SUBJECTS VIEW */}
         {view === "subjects" && (
-          <div style={{ opacity: mounted ? 1 : 0, transform: mounted ? "none" : "translateY(8px)", transition: "all 0.4s ease" }}>
-            <div style={{ marginBottom: 40 }}>
-              <div style={{ fontSize: 11, fontFamily: "'Helvetica Neue', sans-serif", letterSpacing: "0.12em", color: "#888", textTransform: "uppercase", marginBottom: 10 }}>Academic Year 2025–26</div>
-              <h1 style={{ fontSize: 36, fontWeight: 400, color: "#1A1A1A", margin: "0 0 10px", lineHeight: 1.2, fontFamily: FONT }}>
-                Class XI Learning Portal
+          <div style={{ opacity: mounted ? 1 : 0, transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)" }}>
+            <div style={{ marginBottom: 64, textAlign: "center" }}>
+              <div style={{ 
+                display: "inline-block",
+                fontSize: 11, fontWeight: 900, letterSpacing: "0.2em", color: "#6366f1", 
+                textTransform: "uppercase", marginBottom: 16,
+                background: "rgba(99, 102, 241, 0.08)",
+                padding: "6px 16px", borderRadius: "100px"
+              }}>Academic Year 2025–26</div>
+              <h1 style={{ 
+                fontSize: 56, fontWeight: 900, color: "#0f172a", margin: "0 0 16px", 
+                lineHeight: 1.1, tracking: "-0.04em", letterSpacing: "-0.04em"
+              }}>
+                Sapthagiri <span style={{ color: "#6366f1" }}>XI</span> Portal
               </h1>
-              <p style={{ fontSize: 15, color: "#666", margin: 0, fontFamily: "'Helvetica Neue', sans-serif", lineHeight: 1.6 }}>
-                Select a subject to explore chapters and video lessons.
+              <p style={{ fontSize: 18, color: "#64748b", maxWidth: 600, margin: "0 auto", lineHeight: 1.6, fontWeight: 500 }}>
+                High-fidelity educational resources for the future leaders. Select a subject to begin your journey.
               </p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
-              {Object.entries(data).map(([subject, info]) => (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 32 }}>
+              {Object.entries(data).map(([subject, info], idx) => (
                 <div
                   key={subject}
                   onClick={() => { setSelectedSubject(subject); setView("chapters"); }}
                   onMouseEnter={() => setHoveredSubject(subject)}
                   onMouseLeave={() => setHoveredSubject(null)}
                   style={{
-                    background: hoveredSubject === subject ? info.bg : "#FFFFFF",
-                    border: `1.5px solid ${hoveredSubject === subject ? info.accent + "55" : "#E5E5E0"}`,
-                    borderRadius: 12,
-                    padding: "24px 20px",
+                    background: "#FFFFFF",
+                    border: "1px solid #f1f5f9",
+                    borderRadius: 32,
+                    padding: "40px",
                     cursor: "pointer",
-                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                    transform: hoveredSubject === subject ? "translateY(-8px) scale(1.02)" : "none",
-                    boxShadow: hoveredSubject === subject ? `0 20px 40px ${info.accent}15` : "0 2px 8px rgba(0,0,0,0.02)",
-                    animation: `slideUp 0.6s ease forwards ${0.1 * Object.keys(data).indexOf(subject)}s`,
+                    transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+                    transform: hoveredSubject === subject ? "translateY(-12px)" : "none",
+                    boxShadow: hoveredSubject === subject 
+                      ? `0 30px 60px -12px ${info.accent}20, 0 18px 36px -18px rgba(0,0,0,0.1)` 
+                      : "0 10px 20px -5px rgba(0,0,0,0.02)",
+                    animation: `cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards ${idx * 0.1}s`,
                     opacity: 0,
+                    position: "relative",
+                    overflow: "hidden"
                   }}
                 >
                   <style>{`
-                    @keyframes slideUp {
-                      from { opacity: 0; transform: translateY(20px); }
+                    @keyframes cardIn {
+                      from { opacity: 0; transform: translateY(40px); }
                       to { opacity: 1; transform: translateY(0); }
                     }
                   `}</style>
-                  <div style={{ width: 48, height: 48, marginBottom: 14, borderRadius: 10, overflow: 'hidden' }}>
+                  
+                  {/* Subject accent light */}
+                  <div style={{
+                    position: "absolute", top: -40, right: -40, width: 120, height: 120,
+                    background: `${info.accent}15`, borderRadius: "50%", blur: "40px", filter: "blur(40px)"
+                  }} />
+
+                  <div style={{ 
+                    width: 72, height: 72, marginBottom: 32, 
+                    borderRadius: 24, overflow: 'hidden',
+                    boxShadow: `0 12px 24px -6px ${info.accent}40`,
+                    transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+                    transform: hoveredSubject === subject ? "scale(1.1) rotate(5deg)" : "none",
+                  }}>
                     {info.icon.startsWith('/') ? (
                       <img src={info.icon} alt={subject} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <div style={{ fontSize: 32 }}>{info.icon}</div>
+                      <div style={{ fontSize: 40, background: info.bg, width: '100%', height: '100%', display: "flex", alignItems: "center", justifyContent: "center" }}>{info.icon}</div>
                     )}
                   </div>
-                  <div style={{ fontSize: 17, fontWeight: 400, color: "#1A1A1A", marginBottom: 4, fontFamily: FONT }}>{subject}</div>
-                  <div style={{ fontSize: 11, fontFamily: "'Helvetica Neue', sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", color: info.accent, marginBottom: 10 }}>{info.tag}</div>
-                  <div style={{ display: "flex", gap: 12, fontSize: 12, color: "#888", fontFamily: "'Helvetica Neue', sans-serif" }}>
-                    <span>{Object.keys(info.chapters).length} chapters</span>
-                    <span style={{ color: "#DDD" }}>·</span>
-                    <span>{totalVideos(subject)} videos</span>
+                  <h3 style={{ fontSize: 24, fontWeight: 800, color: "#1e293b", marginBottom: 8, letterSpacing: "-0.02em" }}>{subject}</h3>
+                  <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: "0.15em", textTransform: "uppercase", color: info.accent, marginBottom: 24 }}>{info.tag}</div>
+                  
+                  <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 13, color: "#64748b", fontWeight: 600 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                       <div style={{ width: 4, height: 4, borderRadius: "50%", background: info.accent }} />
+                       {Object.keys(info.chapters).length} Chapters
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                       <div style={{ width: 4, height: 4, borderRadius: "50%", background: info.accent }} />
+                       {totalVideos(subject)} Lessons
+                    </div>
                   </div>
                 </div>
               ))}
@@ -371,60 +437,80 @@ export default function ClassPortal() {
 
         {/* CHAPTERS VIEW */}
         {view === "chapters" && selectedSubject && (
-          <div style={{ opacity: mounted ? 1 : 0, transition: "opacity 0.3s ease" }}>
+          <div style={{ animation: "fadeIn 0.5s ease" }}>
+            <style>{`@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`}</style>
+            
             {/* Subject header */}
             <div style={{
               background: "#FFFFFF",
-              border: `1px solid #E5E5E0`,
-              borderRadius: 14,
-              padding: "28px 28px 24px",
-              marginBottom: 28,
-              borderLeft: `4px solid ${accent}`,
+              border: "1px solid #f1f5f9",
+              borderRadius: 40,
+              padding: "48px",
+              marginBottom: 48,
+              boxShadow: "0 20px 40px -20px rgba(0,0,0,0.05)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 40
             }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
-                <div style={{ width: 64, height: 64, borderRadius: 14, overflow: 'hidden' }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+                <div style={{ 
+                  width: 96, height: 96, borderRadius: 28, overflow: 'hidden',
+                  boxShadow: `0 20px 40px -10px ${accent}40`
+                }}>
                   {subjectInfo.icon.startsWith('/') ? (
                     <img src={subjectInfo.icon} alt={selectedSubject} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <span style={{ fontSize: 36 }}>{subjectInfo.icon}</span>
+                    <div style={{ fontSize: 48, background: subjectInfo.bg, width: '100%', height: '100%', display: "flex", alignItems: "center", justifyContent: "center" }}>{subjectInfo.icon}</div>
                   )}
                 </div>
                 <div>
-                  <div style={{ fontSize: 11, fontFamily: "'Helvetica Neue', sans-serif", letterSpacing: "0.12em", color: "#888", textTransform: "uppercase", marginBottom: 4 }}>{subjectInfo.tag}</div>
-                  <h2 style={{ fontSize: 26, fontWeight: 400, color: "#1A1A1A", margin: 0, fontFamily: FONT }}>{selectedSubject}</h2>
+                  <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: "0.2em", color: accent, textTransform: "uppercase", marginBottom: 12 }}>{subjectInfo.tag}</div>
+                  <h2 style={{ fontSize: 40, fontWeight: 900, color: "#0f172a", margin: 0, letterSpacing: "-0.04em" }}>{selectedSubject}</h2>
+                  <div style={{ display: "flex", gap: 24, fontSize: 14, color: "#64748b", marginTop: 12, fontWeight: 500 }}>
+                    <span><strong style={{ color: "#0f172a" }}>{Object.keys(subjectInfo.chapters).length}</strong> Active Chapters</span>
+                    <span style={{ color: "#e2e8f0" }}>|</span>
+                    <span><strong style={{ color: "#0f172a" }}>{totalVideos(selectedSubject)}</strong> Interactive Lessons</span>
+                  </div>
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 24, fontSize: 13, color: "#666", fontFamily: "'Helvetica Neue', sans-serif" }}>
-                <span><strong style={{ color: "#1A1A1A" }}>{Object.keys(subjectInfo.chapters).length}</strong> chapters</span>
-                <span><strong style={{ color: "#1A1A1A" }}>{totalVideos(selectedSubject)}</strong> video lessons</span>
+              
+              <div style={{ position: "relative", width: 320 }}>
+                <span style={{ position: "absolute", left: 20, top: "50%", transform: "translateY(-50%)", fontSize: 18, color: "#94a3b8" }}>⌕</span>
+                <input
+                  type="text"
+                  placeholder="Find a chapter..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "16px 24px 16px 52px",
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "20px",
+                    fontSize: 14,
+                    color: "#0f172a",
+                    outline: "none",
+                    fontWeight: 600,
+                    transition: "all 0.3s",
+                    boxSizing: "border-box"
+                  }}
+                  onFocus={e => {
+                    e.target.style.borderColor = accent;
+                    e.target.style.background = "#fff";
+                    e.target.style.boxShadow = `0 0 0 4px ${accent}10`;
+                  }}
+                  onBlur={e => {
+                    e.target.style.borderColor = "#e2e8f0";
+                    e.target.style.background = "#f8fafc";
+                    e.target.style.boxShadow = "none";
+                  }}
+                />
               </div>
-            </div>
-
-            {/* Search */}
-            <div style={{ position: "relative", marginBottom: 20 }}>
-              <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontSize: 15, color: "#AAA" }}>⌕</span>
-              <input
-                type="text"
-                placeholder="Search chapters…"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "11px 16px 11px 38px",
-                  background: "#FFF",
-                  border: "1px solid #E5E5E0",
-                  borderRadius: 8,
-                  fontSize: 14,
-                  fontFamily: "'Helvetica Neue', sans-serif",
-                  color: "#1A1A1A",
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
-              />
             </div>
 
             {/* Chapter list */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12 }}>
               {filteredChapters.map((chapter, i) => {
                 const count = subjectInfo.chapters[chapter].subtopics.length;
                 return (
@@ -436,64 +522,72 @@ export default function ClassPortal() {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: 14,
-                      background: hoveredChapter === chapter ? subjectInfo.bg : "#FFFFFF",
-                      border: `1px solid ${hoveredChapter === chapter ? accent + "44" : "#E5E5E0"}`,
-                      borderRadius: 10,
-                      padding: "14px 16px",
+                      gap: 24,
+                      background: hoveredChapter === chapter ? "#fff" : "transparent",
+                      border: "1px solid",
+                      borderColor: hoveredChapter === chapter ? "#f1f5f9" : "transparent",
+                      borderRadius: 24,
+                      padding: "24px 32px",
                       cursor: "pointer",
-                      transition: "all 0.2s ease",
-                      transform: hoveredChapter === chapter ? "translateX(4px)" : "none",
-                      animation: `fadeInRight 0.4s ease forwards ${i * 0.05}s`,
+                      transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                      transform: hoveredChapter === chapter ? "translateX(12px)" : "none",
+                      boxShadow: hoveredChapter === chapter ? "0 10px 30px -10px rgba(0,0,0,0.05)" : "none",
+                      animation: `listIn 0.5s ease forwards ${i * 0.05}s`,
                       opacity: 0,
                     }}
                   >
-                    <style>{`
-                      @keyframes fadeInRight {
-                        from { opacity: 0; transform: translateX(-10px); }
-                        to { opacity: 1; transform: translateX(0); }
-                      }
-                    `}</style>
+                    <style>{`@keyframes listIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }`}</style>
                     <span style={{
-                      minWidth: 32, height: 32, borderRadius: "50%",
-                      background: accent + "15",
-                      color: accent,
+                      minWidth: 44, height: 44, borderRadius: 14,
+                      background: hoveredChapter === chapter ? accent : "#f1f5f9",
+                      color: hoveredChapter === chapter ? "#fff" : "#64748b",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 12, fontWeight: 600,
-                      fontFamily: MONO,
-                    }}>{i + 1}</span>
-                    <span style={{ flex: 1, fontSize: 14, color: "#1A1A1A", fontFamily: "'Helvetica Neue', sans-serif" }}>{chapter}</span>
-                    <span style={{ fontSize: 12, color: "#AAA", fontFamily: MONO, marginRight: 4 }}>{count} vid{count !== 1 ? "s" : ""}</span>
-                    <span style={{ fontSize: 16, color: "#CCC" }}>›</span>
+                      fontSize: 14, fontWeight: 800,
+                      transition: "all 0.3s"
+                    }}>{String(i + 1).padStart(2, '0')}</span>
+                    <span style={{ flex: 1, fontSize: 18, fontWeight: 700, color: "#334155" }}>{chapter}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                       <span style={{ fontSize: 11, fontWeight: 800, color: "#94a3b8", letterSpacing: "0.1em" }}>{count} LESSONS</span>
+                       <div style={{ 
+                         width: 32, height: 32, borderRadius: "50%", 
+                         background: hoveredChapter === chapter ? accent + "15" : "transparent",
+                         display: "flex", alignItems: "center", justifyContent: "center",
+                         color: accent, transition: "all 0.3s"
+                       }}>
+                         <span style={{ fontSize: 20 }}>›</span>
+                       </div>
+                    </div>
                   </div>
                 );
               })}
-              {filteredChapters.length === 0 && (
-                <div style={{ textAlign: "center", padding: 40, color: "#AAA", fontFamily: "'Helvetica Neue', sans-serif", fontSize: 14 }}>No chapters match your search.</div>
-              )}
             </div>
           </div>
         )}
 
         {/* SUBTOPICS VIEW */}
         {view === "subtopics" && selectedSubject && selectedChapter && (
-          <div>
+          <div style={{ animation: "fadeIn 0.5s ease" }}>
             <button
               onClick={goSubject}
-              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: accent, fontFamily: "'Helvetica Neue', sans-serif", padding: "0 0 24px", marginLeft: -4 }}
+              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 800, color: accent, textTransform: "uppercase", letterSpacing: "0.1em", padding: "0 0 40px", marginLeft: -4 }}
+              onMouseEnter={e => e.target.style.transform="translateX(-4px)"}
+              onMouseLeave={e => e.target.style.transform="translateX(0)"}
             >
               ← Back to {selectedSubject}
             </button>
 
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 11, fontFamily: "'Helvetica Neue', sans-serif", letterSpacing: "0.12em", color: "#888", textTransform: "uppercase", marginBottom: 8 }}>{selectedSubject}</div>
-              <h2 style={{ fontSize: 24, fontWeight: 400, color: "#1A1A1A", margin: "0 0 6px", fontFamily: FONT }}>{selectedChapter}</h2>
-              <p style={{ fontSize: 13, color: "#888", margin: 0, fontFamily: "'Helvetica Neue', sans-serif" }}>
-                {subjectInfo.chapters[selectedChapter].subtopics.length} video lessons in this chapter
-              </p>
+            <div style={{ marginBottom: 48 }}>
+              <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: "0.2em", color: "#94a3b8", textTransform: "uppercase", marginBottom: 12 }}>{selectedSubject}</div>
+              <h2 style={{ fontSize: 36, fontWeight: 900, color: "#0f172a", margin: "0 0 12px", letterSpacing: "-0.03em" }}>{selectedChapter}</h2>
+              <div style={{ 
+                display: "inline-block", padding: "6px 14px", borderRadius: "8px", 
+                background: "#f1f5f9", color: "#64748b", fontSize: 12, fontWeight: 700 
+              }}>
+                {subjectInfo.chapters[selectedChapter].subtopics.length} Interactive Lessons
+              </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 20 }}>
               {subjectInfo.chapters[selectedChapter].subtopics.map((sub, i) => (
                 <div
                   key={i}
@@ -501,36 +595,32 @@ export default function ClassPortal() {
                   onMouseEnter={() => setHoveredSub(i)}
                   onMouseLeave={() => setHoveredSub(null)}
                   style={{
-                    background: hoveredSub === i ? subjectInfo.bg : "#FFFFFF",
-                    border: `1px solid ${hoveredSub === i ? accent + "55" : "#E5E5E0"}`,
-                    borderRadius: 10,
-                    padding: "16px 18px",
+                    background: "#FFFFFF",
+                    border: "1px solid #f1f5f9",
+                    borderRadius: 28,
+                    padding: "32px",
                     cursor: "pointer",
-                    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                     display: "flex",
-                    alignItems: "flex-start",
-                    gap: 12,
-                    transform: hoveredSub === i ? "translateY(-4px) scale(1.02)" : "none",
-                    boxShadow: hoveredSub === i ? `0 12px 24px ${accent}14` : "none",
-                    animation: `popIn 0.4s ease forwards ${i * 0.03}s`,
+                    alignItems: "center",
+                    gap: 20,
+                    transform: hoveredSub === i ? "translateY(-8px)" : "none",
+                    boxShadow: hoveredSub === i ? `0 20px 40px -12px ${accent}25` : "0 4px 6px -1px rgba(0,0,0,0.02)",
+                    animation: `popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards ${i * 0.05}s`,
                     opacity: 0,
                   }}
                 >
-                  <style>{`
-                    @keyframes popIn {
-                      from { opacity: 0; transform: scale(0.95); }
-                      to { opacity: 1; transform: scale(1); }
-                    }
-                  `}</style>
+                  <style>{`@keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }`}</style>
                   <div style={{
-                    minWidth: 36, height: 36, borderRadius: "50%",
-                    background: accent,
+                    minWidth: 56, height: 56, borderRadius: 20,
+                    background: hoveredSub === i ? accent : "#f8fafc",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    color: "#FFF", fontSize: 13, marginTop: 1, flexShrink: 0,
+                    color: hoveredSub === i ? "#fff" : accent, fontSize: 20, flexShrink: 0,
+                    transition: "all 0.3s"
                   }}>▶</div>
                   <div>
-                    <div style={{ fontSize: 11, color: "#AAA", fontFamily: MONO, marginBottom: 3 }}>Lesson {i + 1}</div>
-                    <div style={{ fontSize: 14, color: "#1A1A1A", fontFamily: "'Helvetica Neue', sans-serif", lineHeight: 1.4 }}>{sub.name}</div>
+                    <div style={{ fontSize: 10, fontWeight: 900, color: "#94a3b8", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 4 }}>LESSON {i + 1}</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: "#334155", lineHeight: 1.4 }}>{sub.name}</div>
                   </div>
                 </div>
               ))}
@@ -540,17 +630,22 @@ export default function ClassPortal() {
 
         {/* VIDEO VIEW */}
         {view === "video" && selectedSubtopic && (
-          <div>
+          <div style={{ animation: "fadeIn 0.5s ease" }}>
             <button
               onClick={goChapter}
-              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: accent, fontFamily: "'Helvetica Neue', sans-serif", padding: "0 0 24px", marginLeft: -4 }}
+              style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 800, color: accent, textTransform: "uppercase", letterSpacing: "0.1em", padding: "0 0 40px", marginLeft: -4 }}
+              onMouseEnter={e => e.target.style.transform="translateX(-4px)"}
+              onMouseLeave={e => e.target.style.transform="translateX(0)"}
             >
               ← Back to lessons
             </button>
 
-            <div style={{ background: "#FFFFFF", border: "1px solid #E5E5E0", borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ 
+              background: "#FFFFFF", border: "1px solid #f1f5f9", borderRadius: 48, overflow: "hidden",
+              boxShadow: "0 40px 80px -20px rgba(0,0,0,0.12)"
+            }}>
               {/* Video embed */}
-              <div style={{ background: "#0F0F0F", aspectRatio: "16/9", position: "relative" }}>
+              <div style={{ background: "#000", aspectRatio: "16/9", position: "relative" }}>
                 <iframe
                   src={getYoutubeEmbedUrl(selectedSubtopic.video)}
                   style={{ width: "100%", height: "100%", border: "none", display: "block" }}
@@ -560,25 +655,24 @@ export default function ClassPortal() {
               </div>
 
               {/* Video info */}
-              <div style={{ padding: "24px 28px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <div style={{ padding: "48px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
                   <span style={{
                     background: accent + "15",
                     color: accent,
-                    fontSize: 11,
-                    fontFamily: "'Helvetica Neue', sans-serif",
-                    letterSpacing: "0.08em",
+                    fontSize: 10,
+                    fontWeight: 900,
+                    letterSpacing: "0.15em",
                     textTransform: "uppercase",
-                    padding: "3px 10px",
-                    borderRadius: 5,
-                    fontWeight: 600,
+                    padding: "6px 16px",
+                    borderRadius: "100px",
                   }}>{selectedSubject}</span>
-                  <span style={{ color: "#DDD" }}>·</span>
-                  <span style={{ fontSize: 12, color: "#888", fontFamily: "'Helvetica Neue', sans-serif" }}>{selectedChapter}</span>
+                  <span style={{ color: "#e2e8f0" }}>•</span>
+                  <span style={{ fontSize: 13, color: "#64748b", fontWeight: 600 }}>{selectedChapter}</span>
                 </div>
-                <h3 style={{ fontSize: 20, fontWeight: 400, color: "#1A1A1A", margin: "0 0 10px", fontFamily: FONT }}>{selectedSubtopic.name}</h3>
-                <p style={{ fontSize: 14, color: "#666", margin: 0, fontFamily: "'Helvetica Neue', sans-serif", lineHeight: 1.7 }}>
-                  This lesson covers <em>{selectedSubtopic.name}</em> as part of the {selectedChapter} chapter. Watch the full video and revisit it anytime from the chapter page.
+                <h3 style={{ fontSize: 32, fontWeight: 900, color: "#0f172a", margin: "0 0 16px", letterSpacing: "-0.03em" }}>{selectedSubtopic.name}</h3>
+                <p style={{ fontSize: 16, color: "#64748b", margin: 0, lineHeight: 1.8, fontWeight: 500, maxWidth: 800 }}>
+                  Dive deep into this session on <strong style={{ color: "#334155" }}>{selectedSubtopic.name}</strong>. This lesson is carefully curated to align with the Class XI curriculum. Take notes and revisit anytime.
                 </p>
               </div>
 
@@ -590,31 +684,39 @@ export default function ClassPortal() {
                 const prev = allSubs[currIdx - 1];
                 if (!next && !prev) return null;
                 return (
-                  <div style={{ borderTop: "1px solid #F0F0EC", padding: "16px 28px", display: "flex", gap: 12 }}>
+                  <div style={{ 
+                    borderTop: "1px solid #f1f5f9", padding: "32px 48px", 
+                    display: "flex", gap: 24, background: "#fcfcfd" 
+                  }}>
                     {prev && (
                       <button
                         onClick={() => { setSelectedSubtopic(prev); }}
                         style={{
-                          flex: 1, background: "#F8F8F5", border: "1px solid #E5E5E0", borderRadius: 8,
-                          padding: "10px 14px", cursor: "pointer", textAlign: "left",
-                          fontSize: 12, fontFamily: "'Helvetica Neue', sans-serif", color: "#555",
+                          flex: 1, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 24,
+                          padding: "20px 28px", cursor: "pointer", textAlign: "left",
+                          transition: "all 0.3s",
                         }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor=accent; e.currentTarget.style.transform="translateY(-4px)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor="#e2e8f0"; e.currentTarget.style.transform="translateY(0)"; }}
                       >
-                        <div style={{ color: "#AAA", marginBottom: 2 }}>← Previous</div>
-                        <div style={{ color: "#1A1A1A" }}>{prev.name}</div>
+                        <div style={{ fontSize: 10, fontWeight: 900, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>← PREVIOUS LESSON</div>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: "#334155" }}>{prev.name}</div>
                       </button>
                     )}
                     {next && (
                       <button
                         onClick={() => { setSelectedSubtopic(next); }}
                         style={{
-                          flex: 1, background: accent + "10", border: `1px solid ${accent}33`, borderRadius: 8,
-                          padding: "10px 14px", cursor: "pointer", textAlign: "right",
-                          fontSize: 12, fontFamily: "'Helvetica Neue', sans-serif", color: "#555",
+                          flex: 1, background: accent, border: "none", borderRadius: 24,
+                          padding: "20px 28px", cursor: "pointer", textAlign: "right",
+                          transition: "all 0.3s",
+                          color: "#fff"
                         }}
+                        onMouseEnter={e => e.currentTarget.style.transform="translateY(-4px)"}
+                        onMouseLeave={e => e.currentTarget.style.transform="translateY(0)"}
                       >
-                        <div style={{ color: "#AAA", marginBottom: 2 }}>Next →</div>
-                        <div style={{ color: "#1A1A1A" }}>{next.name}</div>
+                        <div style={{ fontSize: 10, fontWeight: 900, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>NEXT LESSON →</div>
+                        <div style={{ fontSize: 15, fontWeight: 800 }}>{next.name}</div>
                       </button>
                     )}
                   </div>
@@ -627,9 +729,14 @@ export default function ClassPortal() {
       </div>
 
       {/* Footer */}
-      <div style={{ textAlign: "center", padding: "32px 24px", fontSize: 12, color: "#BBB", fontFamily: "'Helvetica Neue', sans-serif", borderTop: "1px solid #EFEFEB", marginTop: 40 }}>
-        Class XI Learning Portal · Physics · Chemistry · Biology · Maths
-      </div>
+      <footer style={{ 
+        textAlign: "center", padding: "64px 40px", 
+        fontSize: 12, color: "#94a3b8", fontWeight: 700, letterSpacing: "0.1em",
+        borderTop: "1px solid #f1f5f9", marginTop: 80,
+        background: "#fff"
+      }}>
+        SAPTHAGIRI VIDYALAYA · CLASS XI ACADEMIC PORTAL · 2025
+      </footer>
     </div>
   );
 }
