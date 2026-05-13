@@ -60,7 +60,7 @@ export default function AdminDashboard() {
   )
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-50/30">
+    <div className="h-[calc(100vh-80px)] overflow-hidden bg-slate-50/30">
       <div className="p-6 lg:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-700 h-full flex flex-col">
         
         <header className="flex justify-between items-center mb-6">
