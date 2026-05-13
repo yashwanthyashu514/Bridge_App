@@ -9,10 +9,22 @@ const app = express();
 connectDB();
 
 // Middleware
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://bridge-app-admin.vercel.app",
+  "https://bridge-app-parent.vercel.app"
+];
+
 app.use(cors({
-  origin: true, // Allow all origins that pass credentials
-  credentials: true
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
+
+app.options("*", cors());
+
 
 
 app.use(express.json());
