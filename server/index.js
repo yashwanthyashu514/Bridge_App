@@ -10,16 +10,10 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: [
-    'https://bridge-app-admin.vercel.app',
-    'https://bridge-app-parent.vercel.app',
-    process.env.ADMIN_APP_URL,
-    process.env.PARENT_APP_URL,
-    'http://localhost:5173',
-    'http://localhost:5174'
-  ].filter(Boolean),
+  origin: true, // Allow all origins that pass credentials
   credentials: true
 }));
+
 
 app.use(express.json());
 
