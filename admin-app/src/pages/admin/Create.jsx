@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import api from '../../api'
 import toast from 'react-hot-toast'
 import AdminHeader from '../../components/AdminHeader'
+import { GraduationCap, Briefcase, Eye, EyeOff, UserPlus, Copy } from 'lucide-react'
+
 
 export default function AdminCreate() {
   const navigate = useNavigate()
