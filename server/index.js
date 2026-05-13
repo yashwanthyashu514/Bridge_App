@@ -11,11 +11,16 @@ connectDB();
 // Middleware
 app.use(cors({
   origin: [
-    process.env.ADMIN_APP_URL || 'http://localhost:5173',
-    process.env.PARENT_APP_URL || 'http://localhost:5174'
-  ],
+    'https://bridge-app-admin.vercel.app',
+    'https://bridge-app-parent.vercel.app',
+    process.env.ADMIN_APP_URL,
+    process.env.PARENT_APP_URL,
+    'http://localhost:5173',
+    'http://localhost:5174'
+  ].filter(Boolean),
   credentials: true
 }));
+
 app.use(express.json());
 
 // Routes
