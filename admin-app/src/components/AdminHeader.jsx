@@ -5,25 +5,24 @@ export default function AdminHeader({ title, subtitle }) {
   const navigate = useNavigate()
 
   return (
-    <div className="mb-20 animate-in fade-in slide-in-from-top-6 duration-1000">
-      <div className="flex justify-between items-end border-b border-luxury-ink/10 pb-10">
-        <div className="space-y-4">
-          <h1 className="text-5xl font-medium text-luxury-ink italic tracking-tight">{title}</h1>
-          {subtitle && <p className="text-luxury-ink/60 font-medium text-xl max-w-2xl italic">{subtitle}</p>}
+    <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-4xl font-black text-slate-800 tracking-tighter mb-2 italic text-indigo-900">{title}</h1>
+          {subtitle && <p className="text-slate-500 font-medium text-lg max-w-2xl">{subtitle}</p>}
         </div>
         
         <button 
           onClick={() => navigate('/admin')} 
-          className="flex items-center gap-4 text-luxury-ink/40 hover:text-luxury-gold transition-all font-medium text-[10px] tracking-[0.3em] uppercase group"
+          className="flex items-center gap-3 text-slate-500 hover:text-slate-900 transition-all font-bold text-[11px] tracking-[0.2em] uppercase group"
         >
-          <span className="border-b border-transparent group-hover:border-luxury-gold pb-1 transition-all">RETURN TO PORTAL</span>
-          <div className="w-12 h-12 rounded-full border border-luxury-ink/10 flex items-center justify-center group-hover:border-luxury-gold transition-all bg-transparent overflow-hidden relative">
-            <div className="absolute inset-0 bg-luxury-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-            <X className="w-5 h-5 relative z-10 transition-colors group-hover:text-luxury-ink" />
+          BACK TO DASHBOARD
+          <div className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center group-hover:border-slate-400 transition-colors shadow-sm bg-white">
+            <X className="w-4 h-4 text-slate-500" />
           </div>
         </button>
       </div>
+      <div className="h-[1px] w-full bg-slate-100 mt-10"></div>
     </div>
-
   )
 }
